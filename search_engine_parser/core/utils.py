@@ -28,7 +28,6 @@ def get_rand_user_agent():
     except:
        pass
     return user_agent
-    
 
 
 class CacheHandler:
@@ -75,7 +74,12 @@ class CacheHandler:
             auth = aiohttp.BasicAuth(*proxy_auth)
             get_vars.update({'proxy':proxy, 'proxy_auth': auth})
 
-        async with aiohttp.ClientSession() as session:
+        cookies = {
+            # a crude workaround for Google consent page
+            'CONSENT': 'YES+',
+        }
+
+        async with aiohttp.ClientSession(cookies=cookies) as session:
             async with session.get(**get_vars) as resp:
                 html = await resp.text()
                 with open(cache_path, 'wb') as stream:
